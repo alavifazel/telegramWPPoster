@@ -3,12 +3,11 @@ from wordpress_xmlrpc.methods.posts import NewPost
 from wordpress_xmlrpc import Client, WordPressPost
 from wordpress_xmlrpc.compat import xmlrpc_client
 from wordpress_xmlrpc.methods import media, posts
+from wordpress_xmlrpc.methods.users import GetUserInfo
 
 #authenticate
-wp_url = '<WPWEBSITE>/xmlrpc.php'
-wp_username = 'USERNAME'
-wp_password = 'PASSWORD'
-wp = Client(wp_url, wp_username, wp_password)
+wp_url = "<WEBSITE>/xmlrpc.php"
+wp = None
 
 def add_photo(article, filename):
         data = {
@@ -42,3 +41,8 @@ def post_article(data, title):
                 'category': categories
         }
         wp.call(NewPost(post))
+
+def auth(username, password):
+        global wp
+        wp = Client(wp_url, username, password)
+        wp.call(GetUserInfo())
