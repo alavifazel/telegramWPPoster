@@ -4,10 +4,14 @@ from wordpress_xmlrpc import Client, WordPressPost
 from wordpress_xmlrpc.compat import xmlrpc_client
 from wordpress_xmlrpc.methods import media, posts
 from wordpress_xmlrpc.methods.users import GetUserInfo
+from xmlrpc.client import Transport
 
 #authenticate
-wp_url = "<WEBSITE>/xmlrpc.php"
+wp_url = "<WEBSITE>"
 wp = None
+
+class SpecialTransport(Transport):
+    user_agent = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0'
 
 def add_photo(article, filename):
         data = {
@@ -40,9 +44,11 @@ def post_article(data, title):
                 'post_tag': ['test', 'firstpost'],
                 'category': categories
         }
-        wp.call(NewPost(post))
+        id = wp.call(NewPost(post))
+        a = wp.call(posts.GetPost(id))
+        return a.link
 
 def auth(username, password):
         global wp
-        wp = Client(wp_url, username, password)
+        wp = Client(wp_url, username, password, transport=SpecialTransport())
         wp.call(GetUserInfo())

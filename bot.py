@@ -6,12 +6,13 @@ import wp
 import logging
 import os
 from wordpress_xmlrpc.exceptions import InvalidCredentialsError
+from urllib.parse import quote
 
 current_directory = os.getcwd()
 data = []
 authenticated_users = []
 title = ""
-
+rhash = "<RHASH>" # optional
 USER, PASS, TITLE, NEWARTICLE, PREVIEW = range(5)
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -62,8 +63,13 @@ def new_text(bot,update):
     return NEWARTICLE
 
 def post_article(bot, update):
-    wp.post_article(data, title)
+    url = wp.post_article(data, title)
     update.message.reply_text("Post has been published!", reply_markup=ReplyKeyboardMarkup([['/start']], one_time_keyboard=True))
+    # for telegram Instant View (IV)
+    if not rhash:
+        update.message.reply_text(url)
+    else:
+        update.message.reply_text("https://t.me/iv?url=" + quote(url, safe='') + "&rhash=" + rhash)
     data.clear()
     return ConversationHandler.END
 
