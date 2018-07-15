@@ -31,9 +31,8 @@ def add_photo(article, filename):
 def add_text(article, text):
         article.append(text)
 
-categories = ['test']
 
-def post_article(data, title):
+def post_article(data, title, categories):
         article = []
         for d in data:
                 if d.startswith('/home'): # i still dont like this

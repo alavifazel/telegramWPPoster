@@ -12,13 +12,13 @@ import configparser
 config = configparser.ConfigParser()
 config.read("settings.ini")
 
-
 current_directory = os.getcwd()
 data = []
+categories = []
 authenticated_users = []
 title = ""
 rhash = "" # optional
-USER, PASS, TITLE, NEWARTICLE, PREVIEW = range(5)
+USER, PASS, TITLE, CATEGORIES, NEWARTICLE, PREVIEW = range(6)
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -42,11 +42,8 @@ def start(bot, update):
 def get_title(bot, update):
     global title
     title = update.message.text
-    reply_keywords = [['/cancel', '/finish']]
-    update.message.reply_text("Now send me some messages...\n"
-                              "When you are done, submit with /finish or cancel with /cancel .\n",
-                              reply_markup=ReplyKeyboardMarkup(reply_keywords, one_time_keyboard=True))
-    return NEWARTICLE
+    update.message.reply_text("Send me the categories, seperate with comma (,)")
+    return CATEGORIES
 
 def new_photo(bot, update):
     user = update.message.from_user
@@ -68,7 +65,7 @@ def new_text(bot,update):
     return NEWARTICLE
 
 def post_article(bot, update):
-    url = wp.post_article(data, title)
+    url = wp.post_article(data, title, categories)
     update.message.reply_text("Post has been published!", reply_markup=ReplyKeyboardMarkup([['/start']], one_time_keyboard=True))
     # for telegram Instant View (IV)
     if not rhash:
@@ -111,6 +108,17 @@ def get_user(bot, update):
     username = update.message.text
     return PASS
 
+def get_categories(bot, update):
+    global categories
+    passedCategories = update.message.text
+    categories = [x.strip() for x in passedCategories.split(',')]
+    logger.info(categories)
+    reply_keywords = [['/cancel', '/finish']]
+    update.message.reply_text("Now send me some messages...\n"
+                              "When you are done, submit with /finish or cancel with /cancel .\n",
+                              reply_markup=ReplyKeyboardMarkup(reply_keywords, one_time_keyboard=True))
+    return NEWARTICLE
+
 def get_pass(bot, update):
     global password
     password = update.message.text
@@ -138,6 +146,7 @@ def main():
             USER: [RegexHandler('(.*?)', get_user)],
             PASS: [RegexHandler('(.*?)', get_pass)],
             TITLE: [RegexHandler('^(?!.*(/cancel))', get_title)],
+            CATEGORIES: [RegexHandler('(.*?)', get_categories)],
             NEWARTICLE: [MessageHandler(Filters.photo, new_photo), RegexHandler('^(?!.*(/finish|/cancel))', new_text),
                     CommandHandler('finish', finish)],
             PREVIEW: [CommandHandler('yes', post_article), CommandHandler('no', cancel)]
