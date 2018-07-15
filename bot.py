@@ -7,12 +7,17 @@ import logging
 import os
 from wordpress_xmlrpc.exceptions import InvalidCredentialsError
 from urllib.parse import quote
+import configparser
+
+config = configparser.ConfigParser()
+config.read("settings.ini")
+
 
 current_directory = os.getcwd()
 data = []
 authenticated_users = []
 title = ""
-rhash = "<RHASH>" # optional
+rhash = "" # optional
 USER, PASS, TITLE, NEWARTICLE, PREVIEW = range(5)
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -125,7 +130,7 @@ def get_pass(bot, update):
     return TITLE    
 
 def main():
-    updater = Updater("<TOKEN>")
+    updater = Updater(config["INFOS"]["Token"])
     dp = updater.dispatcher
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],

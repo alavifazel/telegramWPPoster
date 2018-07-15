@@ -5,9 +5,13 @@ from wordpress_xmlrpc.compat import xmlrpc_client
 from wordpress_xmlrpc.methods import media, posts
 from wordpress_xmlrpc.methods.users import GetUserInfo
 from xmlrpc.client import Transport
+import configparser
+
+config = configparser.ConfigParser()
+config.read("settings.ini")
 
 #authenticate
-wp_url = "<WEBSITE>"
+wp_url = config["INFOS"]["Website"] + "/xmlrpc.php"
 wp = None
 
 class SpecialTransport(Transport):

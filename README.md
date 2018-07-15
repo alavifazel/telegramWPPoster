@@ -5,9 +5,9 @@ dependencies:
 # Installation
 1. Simply clone the repo with the following command:
 ```
-git clone git@github.com:alavifazel/telegramWPPoster_bot.git
+git clone git@github.com:alavifazel/telegramWPPoster.git
 ```
-2. Replace your bot's token in ```bot.py``` and your website address in ```wp.py```
+2. Edit settings.ini and eplace your bot's token and website address by their placeholders. 
 
 
 
