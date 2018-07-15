@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 def start(bot, update):
     reply_keyword = [['/start']]
     #show all post, view a specific post?
-    logger.warning(update.message.chat.id)
+    logger.info(update.message.chat.id)
     if update.message.chat.id not in authenticated_users:
         update.message.reply_text(
             "Enter username:", reply_markup=ReplyKeyboardRemove())
