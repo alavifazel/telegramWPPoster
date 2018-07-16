@@ -7,7 +7,7 @@ dependencies:
 ```
 git clone git@github.com:alavifazel/telegramWPPoster.git
 ```
-2. Edit settings.ini and eplace your bot's token and website address by their placeholders. 
+2. Edit settings.ini and replace your bot's token, website address and language code (currently fa or en) by their placeholders. 
 
 
 

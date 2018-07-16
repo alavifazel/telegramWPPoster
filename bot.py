@@ -8,9 +8,16 @@ import os
 from wordpress_xmlrpc.exceptions import InvalidCredentialsError
 from urllib.parse import quote
 import configparser
+import gettext
 
 config = configparser.ConfigParser()
 config.read("settings.ini")
+
+if config["INFOS"]["Language"] == "fa":
+    fa = gettext.translation('fa_IR', localedir='locale', languages=['fa'])
+    fa.install()
+else:
+    _ = lambda s: s
 
 current_directory = os.getcwd()
 data = []
@@ -32,17 +39,17 @@ def start(bot, update):
     logger.info(update.message.chat.id)
     if update.message.chat.id not in authenticated_users:
         update.message.reply_text(
-            "Enter username:", reply_markup=ReplyKeyboardRemove())
+            _("Enter username:"), reply_markup=ReplyKeyboardRemove())
 
         return USER
     else:
-        update.message.reply_text("Send me the title...")
+        update.message.reply_text(_("Send me the title..."))
         return TITLE
 
 def get_title(bot, update):
     global title
     title = update.message.text
-    update.message.reply_text("Send me the categories, seperate with comma (,)")
+    update.message.reply_text(_("Send me the categories, seperate with comma (,)"))
     return CATEGORIES
 
 def new_photo(bot, update):
@@ -66,7 +73,7 @@ def new_text(bot,update):
 
 def post_article(bot, update):
     url = wp.post_article(data, title, categories)
-    update.message.reply_text("Post has been published!", reply_markup=ReplyKeyboardMarkup([['/start']], one_time_keyboard=True))
+    update.message.reply_text(_("Post has been published!"), reply_markup=ReplyKeyboardMarkup([['/start']], one_time_keyboard=True))
     # for telegram Instant View (IV)
     if not rhash:
         update.message.reply_text(url)
@@ -87,7 +94,7 @@ def finish(bot, update):
             bot.send_photo(update.message.chat.id, photo=open(d, 'rb'))
         else:
             update.message.reply_text(d)
-    update.message.reply_text("Is it correct?")
+    update.message.reply_text(_("Is it correct?"))
     return PREVIEW
 
 def cancel(bot, update):
@@ -103,7 +110,7 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
 def get_user(bot, update):
-    update.message.reply_text("Enter password:")
+    update.message.reply_text(_("Enter password:"))
     global username
     username = update.message.text
     return PASS
@@ -114,8 +121,8 @@ def get_categories(bot, update):
     categories = [x.strip() for x in passedCategories.split(',')]
     logger.info(categories)
     reply_keywords = [['/cancel', '/finish']]
-    update.message.reply_text("Now send me some messages...\n"
-                              "When you are done, submit with /finish or cancel with /cancel .\n",
+    update.message.reply_text(_("Now send me some messages...\n"
+                              "When you are done, submit with /finish or cancel with /cancel .\n"),
                               reply_markup=ReplyKeyboardMarkup(reply_keywords, one_time_keyboard=True))
     return NEWARTICLE
 
@@ -128,12 +135,12 @@ def get_pass(bot, update):
             wp.auth(username, password)
             authenticated_users.append(chat_id)
         except InvalidCredentialsError:
-            update.message.reply_text("Invalid Credentials.\n\n"
-                                      "Start the bot with /start to try again.",
+            update.message.reply_text(_("Invalid Credentials.\n\n"
+                                      "Start the bot with /start to try again."),
                                       reply_markup=ReplyKeyboardMarkup([['/start']], one_time_keyboard=True))
             return ConversationHandler.END
-        update.message.reply_text("Login succesful!\n")
-    update.message.reply_text("Send me the title")
+        update.message.reply_text(_("Login succesful!\n"))
+    update.message.reply_text(_("Send me the title"))
 
     return TITLE    
 
