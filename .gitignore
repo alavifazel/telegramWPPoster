@@ -1,4 +1,6 @@
 __pycache__/
+*.pyc
 
 # images saved by the program 
 *.jpg
+
