@@ -14,7 +14,7 @@ config = configparser.ConfigParser()
 config.read("settings.ini")
 
 if config["INFOS"]["Language"] == "fa":
-    fa = gettext.translation('fa_IR', localedir='locale', languages=['fa'])
+    fa = gettext.translation("fa_IR", localedir="locale", languages=["fa"])
     fa.install()
 else:
     _ = lambda s: s
@@ -27,7 +27,7 @@ title = ""
 rhash = "" # optional
 USER, PASS, TITLE, CATEGORIES, NEWARTICLE, PREVIEW = range(6)
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
                     level=logging.INFO)
 
 
@@ -86,12 +86,12 @@ def finish(bot, update):
     global title
     update.message.reply_text(
         "Showing preview now...",
-        reply_markup=ReplyKeyboardMarkup([['/yes', '/no']], one_time_keyboard=True))
+        reply_markup=ReplyKeyboardMarkup([["/yes", "/no"]], one_time_keyboard=True))
     # send preview
     update.message.reply_text(title)
     for d in data:
-        if d.startswith('/home') == True:
-            bot.send_photo(update.message.chat.id, photo=open(d, 'rb'))
+        if d.startswith("/home") == True:
+            bot.send_photo(update.message.chat.id, photo=open(d, "rb"))
         else:
             update.message.reply_text(d)
     update.message.reply_text(_("Is it correct?"))
@@ -100,8 +100,8 @@ def finish(bot, update):
 def cancel(bot, update):
     user = update.message.from_user
     logger.info("User %s canceled the conversation.", user.first_name)
-    update.message.reply_text('Cancelled',
-                              reply_markup=ReplyKeyboardMarkup([['/start']], one_time_keyboard=True))
+    update.message.reply_text("Cancelled",
+                              reply_markup=ReplyKeyboardMarkup([["/start"]], one_time_keyboard=True))
     data.clear()
     return ConversationHandler.END
 
